@@ -1,0 +1,247 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard — {{ shop_name }}{% endblock %}
+
+{% block body %}
+
+<!-- ===== TOP HEADER ===== -->
+<header class="top-header">
+  <div class="header-left">
+    <button class="hamburger" onclick="toggleSidebar()">
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="logo-area">
+      <div class="logo-icon">DZ</div>
+      <div>
+        <div class="logo-text">Double <span>Zee</span></div>
+        <div class="logo-sub">Electronics Shop</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="search-box">
+    <input type="text" id="globalSearch" placeholder="Search products, orders, categories..." onkeyup="handleSearch(event)">
+    <button type="button"><i class="fas fa-search"></i></button>
+  </div>
+
+  <div class="header-right">
+    <button class="icon-btn">
+      <i class="far fa-bell"></i>
+      <span class="badge">3</span>
+    </button>
+    <button class="icon-btn">
+      <i class="far fa-envelope"></i>
+      <span class="badge">1</span>
+    </button>
+    <a href="{% url 'admin:index' %}" class="account-dropdown" title="Go to Admin">
+      <div class="avatar">{{ owner_name|first }}</div>
+      <div class="account-info">
+        <div class="account-name">{{ owner_name }}</div>
+        <div class="account-role">Shop Owner</div>
+      </div>
+      <i class="fas fa-chevron-down" style="font-size:10px;color:var(--text-muted);"></i>
+    </a>
+  </div>
+</header>
+
+<!-- ===== SIDEBAR ===== -->
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-menu">
+
+    <div class="sidebar-section-title">Main</div>
+
+    <a class="sidebar-item active" href="{% url 'dashboard' %}">
+      <i class="fas fa-th-large"></i> Dashboard
+    </a>
+    <a class="sidebar-item" href="{% url 'admin:dashboard_product_changelist' %}">
+      <i class="fas fa-box"></i> Products
+      <span class="count">{{ total_products }}</span>
+    </a>
+    <a class="sidebar-item" href="{% url 'admin:dashboard_order_changelist' %}">
+      <i class="fas fa-shopping-cart"></i> Orders
+      <span class="count">{{ new_orders }}</span>
+    </a>
+    <a class="sidebar-item" href="{% url 'admin:dashboard_category_changelist' %}">
+      <i class="fas fa-tags"></i> All Categories
+    </a>
+
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section-title">Management</div>
+
+    <a class="sidebar-item" href="{% url 'admin:auth_user_changelist' %}">
+      <i class="fas fa-users"></i> Customers
+    </a>
+    <a class="sidebar-item" href="{% url 'admin:index' %}">
+      <i class="fas fa-cog"></i> Settings
+    </a>
+
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section-title">About</div>
+
+    <a class="sidebar-item" href="#founder">
+      <i class="fas fa-user-tie"></i> Founder
+    </a>
+    <a class="sidebar-item" href="#history">
+      <i class="fas fa-history"></i> Company History
+    </a>
+
+  </div>
+</nav>
+
+<!-- ===== MAIN CONTENT ===== -->
+<main class="main-content">
+
+  <!-- Welcome Banner -->
+  <div class="welcome-banner">
+    <div class="welcome-text">
+      <h1>Welcome back, <span>{{ owner_name }}</span> 👋</h1>
+      <p>Your electronics empire at a glance — manage products, track orders, and grow your business.</p>
+    </div>
+    <div class="welcome-stats">
+      <div class="welcome-stat">
+        <div class="num">{{ this_month_revenue }}</div>
+        <div class="label">This Month</div>
+      </div>
+      <div class="welcome-stat">
+        <div class="num">{{ total_orders_count }}</div>
+        <div class="label">Total Orders</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Metrics -->
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="icon-wrap orange"><i class="fas fa-dollar-sign"></i></div>
+      <div class="val">{{ total_revenue|floatformat:"0" }}</div>
+      <div class="label">Total Revenue</div>
+      <div class="trend up"><i class="fas fa-arrow-up"></i> {{ revenue_trend }} from last month</div>
+    </div>
+    <div class="metric-card">
+      <div class="icon-wrap blue"><i class="fas fa-shopping-bag"></i></div>
+      <div class="val">{{ new_orders }}</div>
+      <div class="label">New Orders</div>
+      <div class="trend up"><i class="fas fa-arrow-up"></i> {{ orders_trend }} from last month</div>
+    </div>
+    <div class="metric-card">
+      <div class="icon-wrap green"><i class="fas fa-boxes"></i></div>
+      <div class="val">{{ total_products }}</div>
+      <div class="label">Products Listed</div>
+      <div class="trend up"><i class="fas fa-arrow-up"></i> {{ products_trend }}</div>
+    </div>
+    <div class="metric-card">
+      <div class="icon-wrap purple"><i class="fas fa-users"></i></div>
+      <div class="val">{{ total_customers }}</div>
+      <div class="label">Total Customers</div>
+      <div class="trend up"><i class="fas fa-arrow-up"></i> {{ customers_trend }} this month</div>
+    </div>
+  </div>
+
+  <!-- Two Column -->
+  <div class="two-col">
+
+    <!-- Recent Orders -->
+    <div class="panel">
+      <div class="panel-header">
+        <h3><i class="fas fa-clock" style="color:var(--primary);margin-right:8px;"></i>Recent Orders</h3>
+        <a href="{% url 'admin:dashboard_order_changelist' %}" class="btn-link">View All <i class="fas fa-arrow-right"></i></a>
+      </div>
+      <div class="panel-body" style="padding:0 24px;">
+        <table class="order-table">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Qty</th>
+              <th>Amount</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for order in recent_orders %}
+            <tr>
+              <td>
+                <div class="product-cell">
+                  <div class="product-thumb"><i class="fas {{ order.icon }}"></i></div>
+                  <span>{{ order.product }}</span>
+                </div>
+              </td>
+              <td>{{ order.qty }}</td>
+              <td>{{ order.amount }}</td>
+              <td><span class="status {{ order.status|lower }}">{{ order.status }}</span></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Founder & History -->
+    <div class="panel">
+      <div class="panel-header">
+        <h3><i class="fas fa-user-tie" style="color:var(--primary);margin-right:8px;"></i>Founder & History</h3>
+      </div>
+      <div class="panel-body">
+        <div class="founder-card" id="founder">
+          <div class="founder-avatar">{{ owner_name|first }}</div>
+          <div class="founder-info">
+            <h4>{{ owner_name }} D. Zee</h4>
+            <div class="title">Founder & CEO — {{ shop_name }}</div>
+            <div class="bio">
+              Founded in 2019 with a vision to make premium electronics accessible across Nigeria.
+              What started as a small phone accessory stall in Kano has grown into one of the most
+              trusted electronics retailers in the region.
+              <a href="#" onclick="alert('Full story coming soon!')">Read more →</a>
+            </div>
+          </div>
+        </div>
+        <div class="history-timeline" id="history">
+          {% for item in timeline %}
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <div class="year">{{ item.year }}</div>
+              <div class="desc">{{ item.desc }}</div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- All Categories -->
+  <div class="panel" style="margin-bottom:0;">
+    <div class="panel-header">
+      <h3><i class="fas fa-tags" style="color:var(--primary);margin-right:8px;"></i>All Categories</h3>
+      <a href="{% url 'admin:dashboard_category_changelist' %}" class="btn-link">Manage Categories <i class="fas fa-arrow-right"></i></a>
+    </div>
+    <div class="panel-body">
+      <div class="category-grid">
+        {% for cat in categories %}
+        <div class="category-item">
+          <div class="cat-icon" style="background:{{ cat.color }};"><i class="fas {{ cat.icon }}"></i></div>
+          <div>
+            <div class="cat-name">{{ cat.name }}</div>
+            <div class="cat-count">{{ cat.count }} products</div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Search -->
+  <div class="mobile-search" style="margin-top:20px;">
+    <div class="search-box" style="max-width:100%;margin:0;">
+      <input type="text" placeholder="Search..." onkeyup="handleSearch(event)">
+      <button type="button"><i class="fas fa-search"></i></button>
+    </div>
+  </div>
+
+</main>
+
+{% endblock %}
