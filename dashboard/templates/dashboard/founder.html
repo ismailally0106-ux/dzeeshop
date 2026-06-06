@@ -1,0 +1,110 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Founder & History — {{ shop_name }}{% endblock %}
+
+{% block body %}
+
+<header class="top-header">
+  <div class="header-left">
+    <button class="hamburger" onclick="toggleSidebar()">
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="logo-area">
+      <div class="logo-icon">DZ</div>
+      <div>
+        <div class="logo-text">Double <span>Zee</span></div>
+        <div class="logo-sub">Electronics Shop</div>
+      </div>
+    </div>
+  </div>
+  <div class="search-box">
+    <input type="text" id="globalSearch" placeholder="Search..." onkeyup="handleSearch(event)">
+    <button type="button"><i class="fas fa-search"></i></button>
+  </div>
+  <div class="header-right">
+    <button class="icon-btn"><i class="far fa-bell"></i><span class="badge">3</span></button>
+    <button class="icon-btn"><i class="far fa-envelope"></i><span class="badge">1</span></button>
+    <a href="{% url 'admin:index' %}" class="account-dropdown" title="Go to Admin">
+      <div class="avatar">{{ owner_name|first }}</div>
+      <div class="account-info">
+        <div class="account-name">{{ owner_name }}</div>
+        <div class="account-role">Shop Owner</div>
+      </div>
+      <i class="fas fa-chevron-down" style="font-size:10px;color:var(--text-muted);"></i>
+    </a>
+  </div>
+</header>
+
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-menu">
+    <div class="sidebar-section-title">Main</div>
+    <a class="sidebar-item" href="{% url 'dashboard' %}"><i class="fas fa-th-large"></i> Dashboard</a>
+    <a class="sidebar-item" href="{% url 'admin:dashboard_product_changelist' %}"><i class="fas fa-box"></i> Products <span class="count">342</span></a>
+    <a class="sidebar-item" href="{% url 'admin:dashboard_order_changelist' %}"><i class="fas fa-shopping-cart"></i> Orders <span class="count">156</span></a>
+    <a class="sidebar-item" href="{% url 'admin:dashboard_category_changelist' %}"><i class="fas fa-tags"></i> All Categories</a>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section-title">Management</div>
+    <a class="sidebar-item" href="{% url 'admin:auth_user_changelist' %}"><i class="fas fa-users"></i> Customers</a>
+    <a class="sidebar-item" href="{% url 'customer_register' %}"><i class="fas fa-user-plus"></i> Register Customer</a>
+    <a class="sidebar-item" href="{% url 'admin:index' %}"><i class="fas fa-cog"></i> Settings</a>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section-title">About</div>
+    <a class="sidebar-item active" href="{% url 'founder' %}"><i class="fas fa-user-tie"></i> Founder</a>
+    <a class="sidebar-item" href="{% url 'founder' %}"><i class="fas fa-history"></i> Company History</a>
+  </div>
+</nav>
+
+<main class="main-content">
+  <div class="welcome-banner" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);">
+    <div class="welcome-text">
+      <h1>Meet the <span>Founder</span></h1>
+      <p>The story behind Double Zee Electronics Shop.</p>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-bottom:28px;">
+    <div class="panel-header">
+      <h3><i class="fas fa-user-tie" style="color:var(--primary);margin-right:8px;"></i>Founder</h3>
+    </div>
+    <div class="panel-body">
+      <div class="founder-card">
+        <div class="founder-avatar">{{ owner_name|first }}</div>
+        <div class="founder-info">
+          <h4>{{ owner_name }} D. Zee</h4>
+          <div class="title">Founder & CEO — {{ shop_name }}</div>
+          <div class="bio">
+            Founded in 2019 with a vision to make premium electronics accessible across Nigeria.
+            What started as a small phone accessory stall in Kano has grown into one of the most
+            trusted electronics retailers in the region. With a passion for technology and a commitment
+            to quality, Ismail has built Double Zee into a brand that customers trust for authentic
+            electronics at fair prices.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-bottom:0;">
+    <div class="panel-header">
+      <h3><i class="fas fa-history" style="color:var(--primary);margin-right:8px;"></i>Company History</h3>
+    </div>
+    <div class="panel-body">
+      <div class="history-timeline" style="border-top:none;padding-top:0;">
+        {% for item in timeline %}
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="year">{{ item.year }}</div>
+            <div class="desc">{{ item.desc }}</div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</main>
+
+{% endblock %}

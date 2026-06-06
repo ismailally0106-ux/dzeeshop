@@ -1,4 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth import login
+from django.contrib.auth.forms import UserCreationForm
 from .models import Category, Product, Order
 
 def dashboard(request):
@@ -34,21 +37,42 @@ def dashboard(request):
         'this_month_revenue': '₦2.4M',
         'total_orders_count': 1247,
         'recent_orders': [
-            {'product': 'Wireless Headphones', 'icon': 'fa-headphones', 'qty': 2, 'amount': '₦45,000', 'status': 'Delivered'},
-            {'product': 'iPhone 15 Pro Max', 'icon': 'fa-mobile-alt', 'qty': 1, 'amount': '₦1,450,000', 'status': 'Shipped'},
-            {'product': 'MacBook Air M3', 'icon': 'fa-laptop', 'qty': 1, 'amount': '₦2,200,000', 'status': 'Pending'},
-            {'product': 'Samsung Galaxy Tab S9', 'icon': 'fa-tablet-alt', 'qty': 3, 'amount': '₦780,000', 'status': 'Cancelled'},
-            {'product': 'Apple Watch Series 9', 'icon': 'fa-clock', 'qty': 2, 'amount': '₦620,000', 'status': 'Delivered'},
+            {'product': 'Wireless Headphones', 'icon': 'fa-headphones', 'qty': 2, 'amount': '₦45,000', 'status': 'Delivered', 'price': '₦22,500', 'img': 'headphones.jpg'},
+            {'product': 'iPhone 15 Pro Max', 'icon': 'fa-mobile-alt', 'qty': 1, 'amount': '₦1,450,000', 'status': 'Shipped', 'price': '₦1,450,000', 'img': 'iphone15.jpg'},
+            {'product': 'MacBook Air M3', 'icon': 'fa-laptop', 'qty': 1, 'amount': '₦2,200,000', 'status': 'Pending', 'price': '₦2,200,000', 'img': 'macbook.jpg'},
+            {'product': 'Samsung Galaxy Tab S9', 'icon': 'fa-tablet-alt', 'qty': 3, 'amount': '₦780,000', 'status': 'Cancelled', 'price': '₦260,000', 'img': 'tablet.jpg'},
+            {'product': 'Apple Watch Series 9', 'icon': 'fa-clock', 'qty': 2, 'amount': '₦620,000', 'status': 'Delivered', 'price': '₦310,000', 'img': 'applewatch.jpg'},
         ],
         'categories': categories_data,
         'frequently_searched': frequently_searched,
+        'owner_name': 'Ismail',
+        'shop_name': 'Double Zee Electronics Shop',
+    }
+    return render(request, 'dashboard/index.html', context)
+
+
+def founder(request):
+    context = {
+        'owner_name': 'Ismail',
+        'shop_name': 'Double Zee Electronics Shop',
         'timeline': [
             {'year': 2019, 'desc': 'Double Zee founded as a small electronics stall in Kano market.'},
             {'year': 2021, 'desc': 'Expanded to online store — first 100 orders fulfilled.'},
             {'year': 2023, 'desc': 'Opened second showroom in Abuja. Team grew to 15 staff.'},
             {'year': 2025, 'desc': '1,000+ products listed. 2,800+ customers served nationwide.'},
         ],
-        'owner_name': 'Ismail',
-        'shop_name': 'Double Zee Electronics Shop',
     }
-    return render(request, 'dashboard/index.html', context)
+    return render(request, 'dashboard/founder.html', context)
+
+
+def customer_register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, 'Registration successful! Welcome to Double Zee Electronics.')
+            return redirect('dashboard')
+    else:
+        form = UserCreationForm()
+    return render(request, 'dashboard/register.html', {'form': form})

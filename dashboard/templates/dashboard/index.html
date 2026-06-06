@@ -74,6 +74,9 @@
     <a class="sidebar-item" href="{% url 'admin:auth_user_changelist' %}">
       <i class="fas fa-users"></i> Customers
     </a>
+    <a class="sidebar-item" href="{% url 'customer_register' %}">
+      <i class="fas fa-user-plus"></i> Register Customer
+    </a>
     <a class="sidebar-item" href="{% url 'admin:index' %}">
       <i class="fas fa-cog"></i> Settings
     </a>
@@ -81,10 +84,10 @@
     <div class="sidebar-divider"></div>
     <div class="sidebar-section-title">About</div>
 
-    <a class="sidebar-item" href="#founder">
+    <a class="sidebar-item" href="{% url 'founder' %}">
       <i class="fas fa-user-tie"></i> Founder
     </a>
-    <a class="sidebar-item" href="#history">
+    <a class="sidebar-item" href="{% url 'founder' %}">
       <i class="fas fa-history"></i> Company History
     </a>
 
@@ -150,64 +153,33 @@
         <a href="{% url 'admin:dashboard_order_changelist' %}" class="btn-link">View All <i class="fas fa-arrow-right"></i></a>
       </div>
       <div class="panel-body" style="padding:0 24px;">
-        <table class="order-table">
-          <thead>
-            <tr>
-              <th>Product</th>
-              <th>Qty</th>
-              <th>Amount</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for order in recent_orders %}
-            <tr>
-              <td>
-                <div class="product-cell">
-                  <div class="product-thumb"><i class="fas {{ order.icon }}"></i></div>
-                  <span>{{ order.product }}</span>
-                </div>
-              </td>
-              <td>{{ order.qty }}</td>
-              <td>{{ order.amount }}</td>
-              <td><span class="status {{ order.status|lower }}">{{ order.status }}</span></td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Founder & History -->
-    <div class="panel">
-      <div class="panel-header">
-        <h3><i class="fas fa-user-tie" style="color:var(--primary);margin-right:8px;"></i>Founder & History</h3>
-      </div>
-      <div class="panel-body">
-        <div class="founder-card" id="founder">
-          <div class="founder-avatar">{{ owner_name|first }}</div>
-          <div class="founder-info">
-            <h4>{{ owner_name }} D. Zee</h4>
-            <div class="title">Founder & CEO — {{ shop_name }}</div>
-            <div class="bio">
-              Founded in 2019 with a vision to make premium electronics accessible across Nigeria.
-              What started as a small phone accessory stall in Kano has grown into one of the most
-              trusted electronics retailers in the region.
-              <a href="#" onclick="alert('Full story coming soon!')">Read more →</a>
-            </div>
-          </div>
-        </div>
-        <div class="history-timeline" id="history">
-          {% for item in timeline %}
-          <div class="timeline-item">
-            <div class="timeline-dot"></div>
-            <div class="timeline-content">
-              <div class="year">{{ item.year }}</div>
-              <div class="desc">{{ item.desc }}</div>
-            </div>
-          </div>
-          {% endfor %}
-        </div>
+          <table class="order-table">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Unit Price</th>
+                <th>Qty</th>
+                <th>Total</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for order in recent_orders %}
+              <tr>
+                <td>
+                  <div class="product-cell">
+                    <div class="product-thumb"><i class="fas {{ order.icon }}"></i></div>
+                    <span>{{ order.product }}</span>
+                  </div>
+                </td>
+                <td><span style="font-weight:500;">{{ order.price }}</span></td>
+                <td>{{ order.qty }}</td>
+                <td><span style="font-weight:700;color:var(--text-dark);">{{ order.amount }}</span></td>
+                <td><span class="status {{ order.status|lower }}">{{ order.status }}</span></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
       </div>
     </div>
 
