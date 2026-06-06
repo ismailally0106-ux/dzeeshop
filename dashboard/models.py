@@ -7,6 +7,7 @@ class Category(models.Model):
     icon = models.CharField(max_length=50, default='fa-tag')
     color = models.CharField(max_length=7, default='#ff6a00')
     display_order = models.PositiveIntegerField(default=0)
+    image = models.ImageField(upload_to='categories/', blank=True, null=True)
 
     class Meta:
         ordering = ['display_order', 'name']

@@ -213,7 +213,33 @@
 
   </div>
 
-  <!-- All Categories -->
+  <!-- Frequently Searched Items -->
+  <div class="panel" style="margin-bottom:28px;">
+    <div class="panel-header">
+      <h3><i class="fas fa-fire" style="color:var(--primary);margin-right:8px;"></i>Frequently Searched Items</h3>
+      <button class="btn-link">View All <i class="fas fa-arrow-right"></i></button>
+    </div>
+    <div class="panel-body">
+      <div class="product-grid">
+        {% for item in frequently_searched %}
+        <div class="product-card">
+          <div class="product-img" style="background:linear-gradient(135deg, {{ item.color }}22, {{ item.color }}44);">
+            <i class="fas {{ item.icon }}" style="font-size:32px;color:{{ item.color }};"></i>
+          </div>
+          <div class="product-info">
+            <div class="product-name">{{ item.name }}</div>
+            <div class="product-price">{{ item.price }}</div>
+          </div>
+          <div class="product-searches">
+            <i class="fas fa-search" style="font-size:11px;"></i> {{ item.searches }} searches
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- All Categories with Images -->
   <div class="panel" style="margin-bottom:0;">
     <div class="panel-header">
       <h3><i class="fas fa-tags" style="color:var(--primary);margin-right:8px;"></i>All Categories</h3>
@@ -223,7 +249,9 @@
       <div class="category-grid">
         {% for cat in categories %}
         <div class="category-item">
-          <div class="cat-icon" style="background:{{ cat.color }};"><i class="fas {{ cat.icon }}"></i></div>
+          <div class="cat-icon" style="background:{{ cat.color }};">
+            <i class="fas {{ cat.icon }}"></i>
+          </div>
           <div>
             <div class="cat-name">{{ cat.name }}</div>
             <div class="cat-count">{{ cat.count }} products</div>
